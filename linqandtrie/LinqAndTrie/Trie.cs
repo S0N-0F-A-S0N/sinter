@@ -73,14 +73,14 @@ namespace LinqAndTrie
                     return false;
                 }
 
-                if (!currentNode.Children.ContainsKey(letter))
+                if (!currentNode.Children.TryGetValue(letter, out TrieNode childNode))
                 {
                     result = currentNode;
                     return false;
                 }
 
                 lastNode = currentNode;
-                currentNode = currentNode.Children[letter];
+                currentNode = childNode;
                 lastIndexMatched++;
             }
 
@@ -111,10 +111,13 @@ namespace LinqAndTrie
                 if (currentNode.Children == null)
                     currentNode.Children = new Dictionary<Alphabet, TrieNode>();
 
-                if (!currentNode.Children.ContainsKey(letter))
-                    currentNode.Children.Add(letter, new TrieNode(currentNode, letter));
+                if (!currentNode.Children.TryGetValue(letter, out TrieNode childNode))
+                {
+                    childNode = new TrieNode(currentNode, letter);
+                    currentNode.Children.Add(letter, childNode);
+                }
 
-                currentNode = currentNode.Children[letter];
+                currentNode = childNode;
                 currentIndex++;
             }
 
